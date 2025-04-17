@@ -1,0 +1,33 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:17.10.4-ce.0
+    container_name: gitlab
+    hostname: 'localhost'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:8929'
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+
+        #Настройка smtp для mail.ru
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "smtp.mail.ru"
+        gitlab_rails['smtp_port'] = 465
+        gitlab_rails['smtp_user_name'] = "mail@mail.ru"
+        gitlab_rails['smtp_password'] = "app-password"
+        gitlab_rails['smtp_domain'] = "mail.ru"
+        gitlab_rails['smtp_authentication'] = "login"
+        gitlab_rails['smtp_enable_starttls_auto'] = false
+        gitlab_rails['smtp_tls'] = true
+
+        gitlab_rails['smtp_openssl_verify_mode'] = 'peer'
+
+        gitlab_rails['gitlab_email_from'] = 'mail@mail.ru'
+    ports:
+      - '8929:8929'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - '${GITLAB_HOME}/config:/etc/gitlab'
+      - '${GITLAB_HOME}/logs:/var/log/gitlab'
+      - '${GITLAB_HOME}/data:/var/opt/gitlab'
+    shm_size: '1g'
